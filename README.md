@@ -1,11 +1,16 @@
-# add project name here  <img src='https://21centuryweather.org.au/wp-content/uploads/Hackathon-Image-WCRP-Positive-1536x736.jpg' align="right" height="139" />
+# Evaluation of Meso-scale Degree of Organization of Convection  <img src='https://21centuryweather.org.au/wp-content/uploads/Hackathon-Image-WCRP-Positive-1536x736.jpg' align="right" height="139" />
 
-Project description, please include the main idea and questions that motivate the project.
+Observational studies show, the degree to which convection is in a more or less organized state on spatial scales of 100-200 km (mesoscale) is closely coupled with tropical-mean radiative fluxes (Bony et al., 2020). Therefore, mesoscale DOC is likely an important convective feature for a realistic representation of the radiation budget. In this workshop, we calculate mesoscale DOC from model output and satellite observations, highlight model differences in the representation of DOC, and compare model DOC with observed DOC. The first two days will be spent calculating and contrasting different measures of DOC. On the third day, we collaborate with the large-scale environmental conditions group to compare meso-scale DOC with environmental conditions, and on the final day, we summarize the key findings and tidy up the github repository for future work.
 
 
 **Project leads:** name, affiliation/github username
+Philip Blackberg, Monash University/@PBlackberg
 
 **Project members:** name, affiliation/github username
+Greeshma Surendran, g.surendran@unsw.edu.au
+Alejandra Isaza, a.isaza@unsw.edu.au
+Yinglin Mu,yinglin.mu@unsw.edu.au
+Chris Chambers cchambers@unimelb.edu.au
 
 **Collaborators:** list here other collaborators to the project.
 
@@ -14,7 +19,6 @@ Project description, please include the main idea and questions that motivate th
 * Name, link
 
 ## Contributing Guidelines
-
 > The group will decide how to work as a team. This is only an example. 
 
 This section outlines the guidelines to ensure everyone can work and collaborate. All project members have write access to this repository, to avoid overlapping and merge issues make sure you discuss the plan and any changes to existing code or analysis.
