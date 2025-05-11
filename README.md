@@ -13,7 +13,7 @@ Observational studies show, the degree to which convection is in a more or less 
 [Yinglin Mu,            University of New South Wales,  yinglin.mu@unsw.edu.au]  
 [Chris Chambers         The University of Melbourne,    cchambers@unimelb.edu.au]  
 
-**Collaborators:** list here other collaborators to the project.
+**Collaborators:** list here other collaborators to the project.  
 [hk25-AusNode-LargeScaleP](https://github.com/21centuryweather/hk25-AusNode-LargeScaleP?tab=readme-ov-file)
 
 
