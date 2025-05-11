@@ -3,14 +3,14 @@
 Observational studies show, the degree to which convection is in a more or less organized state on spatial scales of 100-200 km (mesoscale) is closely coupled with tropical-mean radiative fluxes (Bony et al., 2020). Therefore, mesoscale DOC is likely an important convective feature for a realistic representation of the radiation budget. In this workshop, we calculate mesoscale DOC from model output and satellite observations, highlight model differences in the representation of DOC, and compare model DOC with observed DOC. The first two days will be spent calculating and contrasting different measures of DOC. On the third day, we collaborate with the large-scale environmental conditions group to compare meso-scale DOC with environmental conditions, and on the final day, we summarize the key findings and tidy up the github repository for future work.
 
 
-**Project leads** [name, affiliation, github username]  
-[Philip Blackberg, Monash University, [PBlackberg](https://github.com/PBlackberg?tab=repositories)]
+**Project leads** [name, affiliation, email, github username]  
+[Philip Blackberg,      Monash University,              philip.blackberg@monash.edu,    [PBlackberg](https://github.com/PBlackberg?tab=repositories)]
 
-**Project members:** name, affiliation/github username  
-Greeshma Surendran, g.surendran@unsw.edu.au  
-Alejandra Isaza, a.isaza@unsw.edu.au  
-Yinglin Mu,yinglin.mu@unsw.edu.au  
-Chris Chambers cchambers@unimelb.edu.au  
+**Project members** [name, affiliation, github username]  
+[Greeshma Surendran,    University of New South Wales,  g.surendran@unsw.edu.au]
+[Alejandra Isaza,       University of New South Wales,  a.isaza@unsw.edu.au]
+[Yinglin Mu,            University of New South Wales,  yinglin.mu@unsw.edu.au]
+[Chris Chambers         The University of Melbourne,    cchambers@unimelb.edu.au]
 
 **Collaborators:** list here other collaborators to the project.
 
