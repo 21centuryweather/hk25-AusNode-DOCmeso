@@ -3,6 +3,8 @@
 import xarray as xr
 import numpy as np
 from pathlib import Path
+import healpy as hp
+import easygems.healpix as egh
 
 # -- util- and local scripts --
 import os
@@ -26,8 +28,6 @@ def import_relative_module(module_name, file_path):
         module_path = f"{module_base}.{module_name}"
     return importlib.import_module(module_path)
 mS = import_relative_module('user_specs',                                           'utils')
-
-
 
 
 if __name__ == '__main__':

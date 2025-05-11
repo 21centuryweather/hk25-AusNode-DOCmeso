@@ -17,9 +17,12 @@ Observational studies show, the degree to which convection is in a more or less 
 [hk25-AusNode-LargeScaleP](https://github.com/21centuryweather/hk25-AusNode-LargeScaleP?tab=readme-ov-file)
 
 
-**Data:**
-* Name, link
-* Name, link
+**Data:** [name, directory on nci]
+* [Unified Model: um_glm_n2560_RAL3](https://github.com/21centuryweather/hackathon-2025-australia-node/blob/main/available_simulations.md), /g/data/qx55/uk_node/glm.n2560_RAL3p3
+* [ICON: icon_d3hp003](https://github.com/21centuryweather/hackathon-2025-australia-node/blob/main/available_simulations.md), /g/data/qx55/germany_node/d3hp003.zarr
+* [IMERG: V07B](https://gpm.nasa.gov/data/imerg), /g/data/ia39/aus-ref-clim-data-nci/frogs/data/1DD_V1/IMERG_V07B_FC
+* [ERA5](https://www.ecmwf.int/en/forecasts/dataset/ecmwf-reanalysis-v5), /g/data/rt52/era5/pressure-levels
+
 
 ## Contributing Guidelines
 > The group will decide how to work as a team. This is only an example. 
