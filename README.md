@@ -6,11 +6,11 @@ Observational studies show, the degree to which convection is in a more or less 
 **Project leads** [name, affiliation, email, github username]  
 [Philip Blackberg,      Monash University,              philip.blackberg@monash.edu,    [PBlackberg](https://github.com/PBlackberg?tab=repositories)]
 
-**Project members** [name, affiliation, github username]  
-[Greeshma Surendran,    University of New South Wales,  g.surendran@unsw.edu.au]
-[Alejandra Isaza,       University of New South Wales,  a.isaza@unsw.edu.au]
-[Yinglin Mu,            University of New South Wales,  yinglin.mu@unsw.edu.au]
-[Chris Chambers         The University of Melbourne,    cchambers@unimelb.edu.au]
+**Project members** [name, affiliation, email, github username]  
+[Greeshma Surendran,    University of New South Wales,  g.surendran@unsw.edu.au]  
+[Alejandra Isaza,       University of New South Wales,  a.isaza@unsw.edu.au]  
+[Yinglin Mu,            University of New South Wales,  yinglin.mu@unsw.edu.au]  
+[Chris Chambers         The University of Melbourne,    cchambers@unimelb.edu.au]  
 
 **Collaborators:** list here other collaborators to the project.
 
