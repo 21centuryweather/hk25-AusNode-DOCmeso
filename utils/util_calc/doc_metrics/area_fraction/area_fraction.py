@@ -17,7 +17,6 @@ def area_fraction(conv_regions, da_area):
     return area_fraction
 
 
-
 # == when this script is ran ==
 if __name__ == '__main__':
     print('executes')

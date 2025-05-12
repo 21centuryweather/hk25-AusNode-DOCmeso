@@ -23,7 +23,7 @@ def get_contiguous_regions(da, connect_lon = True):
     ''' da is 2D array with [0, 1] '''
     # -- convective objects --
     labels_np = skm.label(da, background = 0, connectivity = 2)                     # returns numpy array
-    labels_np = cB.connect_boundary(labels_np)                                      # connect objects across boundary
+    # labels_np = cB.connect_boundary(labels_np)                                      # connect objects across boundary
     labels = np.unique(labels_np)[1:]                                               # first unique value (zero) is background
     labels_xr = xr.DataArray(                                                       # convective objects
         data = labels_np,
