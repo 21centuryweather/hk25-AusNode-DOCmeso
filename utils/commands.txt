@@ -1,0 +1,25 @@
+'''
+# ------------
+#  commands
+# ------------
+
+'''
+
+# -- check status --
+watch qstat -u cb4968
+qstat -u cb4968                 # lists all running jobs
+qstat -f <job_id>
+qstat -f 137915924.gadi-pbs     # checks resources for job
+
+# -- cancel jobs --
+qdel -u cb4968                  # deletes all running jobs
+qdel <job_id>                   # delete specific job
+
+
+
+
+
+
+
+
+
