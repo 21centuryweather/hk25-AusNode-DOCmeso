@@ -101,7 +101,6 @@ def get_data(process_request, process_data_further):
     var, dataset, time_str, t_freq, lon_area, lat_area, resolution, _, ds_regrid = process_request
 
     # -- get file and open data --
-    year, month, day = time_str.split('-')
     
     if dataset == "IMERG":
         year, month, day = time_str.split('-')
