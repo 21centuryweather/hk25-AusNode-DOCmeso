@@ -130,7 +130,7 @@ def get_data(process_request, process_data_further):
         #folder   = f'/scratch/nf33/Healpix_data/{dataset}'
         #filename = f'data.healpix.PT1H.{resolution}.zarr'
         folder = f'/g/data/qx55/germany_node/d3hp003.zarr/'
-        filename = f'PT1H_point_z10_atm.zarr'
+        filename = f'PT1H_point_{resolution}_atm.zarr'
         da  = xr.open_zarr(f'{folder}/{filename}')
         da  = da.sel(time = time_str) if time_str != "All" else da 
         
