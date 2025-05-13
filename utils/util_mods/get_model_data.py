@@ -121,7 +121,7 @@ def get_data(process_request, process_data_further):
         #folder = f'/scratch/nf33/Healpix_data/{dataset}'
         #filename = f'data.healpix.PT1H.{resolution}.zarr'
         folder = f'/g/data/qx55/uk_node/glm.n2560_RAL3p3/'
-        filename = f'data.healpix.PT1H.{resolution}.zarr'
+        filename = f'data.healpix.PT{t_freq}.{resolution}.zarr'
         da  = xr.open_zarr(f'{folder}/{filename}')
         da  = da.sel(time = time_str) if time_str != "All" else da 
         
@@ -129,7 +129,7 @@ def get_data(process_request, process_data_further):
         #folder   = f'/scratch/nf33/Healpix_data/{dataset}'
         #filename = f'data.healpix.PT1H.{resolution}.zarr'
         folder = f'/g/data/qx55/germany_node/d3hp003.zarr/'
-        filename = f'PT1H_point_{resolution}_atm.zarr'
+        filename = f'PT{t_freq}_point_{resolution}_atm.zarr'
         da  = xr.open_zarr(f'{folder}/{filename}')
         da  = da.sel(time = time_str) if time_str != "All" else da 
         
@@ -165,7 +165,7 @@ if __name__ == '__main__':
     var   =         'pr'
     dataset =       'ICON' # "UM" or "ICON"
     time_str =      '2020-03-01 00:00' # or "All"
-    t_freq =        'hourly'
+    t_freq =        '1H'
     lon_area =      None
     lat_area =      None
     resolution =    'z10'
