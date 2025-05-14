@@ -21,4 +21,4 @@ module load conda/analysis3-unstable
 
 cd /scratch/up6/gs5098/hackathon2025/hk25-AusNode-DOCmeso/get_metrics/Greeshma/
 
-python3 yearly_mean.py
+python3 daily_mean_precip.py
