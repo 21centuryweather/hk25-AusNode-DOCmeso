@@ -33,6 +33,7 @@ def process_data_further(da, process_request):
     # da.to_netcdf(path_save)
     
     # print (f"{dataset} regridded file was saved")
+    ''
     del da
 
 # == pre-process ==
