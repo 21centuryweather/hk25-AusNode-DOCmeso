@@ -12,7 +12,7 @@ import sys
 import numpy as np
 import xarray as xr
 import skimage.measure as skm
-from scipy.integrate import simps
+# from scipy.integrate import simps
 
 # -- imported scripts --
 import os

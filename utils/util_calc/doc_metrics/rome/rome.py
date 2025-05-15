@@ -21,7 +21,7 @@ import utils.util_calc.area_weighting.globe_area_weight         as gW
 
 
 # == Calculate metric ==
-def calc_rome(da, distance_matrix = None, da_area = None, check_input = False):
+def calc_rome(da, distance_matrix = None, da_area = None, check_input = False, connect_lon = True):
     '''         
     rome = (1 / N) * sum(q_i(a, b)) for i = 1, 2, 3, n, when n > 1
     rome = A_a                                          when n = 1
@@ -61,7 +61,7 @@ def calc_rome(da, distance_matrix = None, da_area = None, check_input = False):
             exit()
 
     # -- contiguous regions --
-    da, labels = cR.get_contiguous_regions(da, connect_lon = True)                  # each object gets a unique number specified by labels
+    da, labels = cR.get_contiguous_regions(da, connect_lon)                  # each object gets a unique number specified by labels
 
     # -- distance matrix --
     if distance_matrix is None:
