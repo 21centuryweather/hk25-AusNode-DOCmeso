@@ -124,7 +124,7 @@ def main():
         [os.remove(path_temp) for path_temp in temp_files]                                                                          #
         # -- job resources (calc) --
         n_jobs_calc = 12  
-        walltime_calc = '1:30:00'                                                                                                   # job time for complete time_period
+        walltime_calc = '4:00:00'                                                                                                   # job time for complete time_period
         mem_calc = '50GB'                                                                                                           #
         ncpus_calc = 1                                                                                                              # if parallelizing, do it on the months
         # -- divide time_period calc, in n sections -- 

@@ -149,6 +149,8 @@ def calculate_metric(data_objects):
     # == create metric ==
     # -- check data --
     da, process_requestd, count = data_objects
+    # print(da)
+    # exit()
     
     # -- for area weighting --
     da_area = cW.get_area_matrix(da.lat, da.lon)   
@@ -182,7 +184,7 @@ def calculate_metric(data_objects):
             metric_calc.append(metric_timestep)
 
             # -- visualize metric --
-            plot = True
+            plot = False
             if plot and quant_str == 'pr_percentiles_95':
                 # print(f'threshold is: {threshold}')
                 # -- create figure --
@@ -231,8 +233,8 @@ def calculate_metric(data_objects):
                 fig.savefig(path)
                 print(f'plot saved at: {path}')
                 plt.close(fig)
-                exit()
-        exit()
+        #         exit()
+        # exit()
 
         # -- concatenate timesteps --
         metric_calc =  xr.concat(metric_calc, dim = 'time')

@@ -36,12 +36,12 @@ def import_relative_module(module_name, file_path):
 mS = import_relative_module('user_specs',                   'utils')
 jS = import_relative_module('submit_as_job',                __file__)
 mC = import_relative_module('calc_metric',                  __file__)
-gD = import_relative_module('util_obs.get_imerg_data',      'utils')
+gD = import_relative_module('util_icon.get_icon_data',      'utils')
 
 
 # == process data ==
 def post_process_data(da):
-    # da = da * 24                # change units from [mm/hr -> mm/day], not necessary
+    da = da * 60 * 60                # change units from [mm/hr -> mm/day], not necessary
     da = da.fillna(0)
     return da
 
@@ -57,7 +57,8 @@ def get_metric(dataset, t_freq, lon_area, lat_area, resolution, time_period, yea
         for day in days:
             # -- get data --      
             time_str =      f'{year}-{int(month):02d}-{int(day):02d}'
-            process_request = ['precipitation', 'IMERG', time_str, t_freq, lon_area, lat_area, resolution]
+            process_request = ['pr', dataset, time_str, t_freq, lon_area, lat_area, resolution]
+            process_request2 = ['rlut', dataset, time_str, t_freq, lon_area, lat_area, resolution]
             if test:                                                                                                                            # for quickly testing timestep
                 print('getting test data')
                 try:
@@ -65,6 +66,11 @@ def get_metric(dataset, t_freq, lon_area, lat_area, resolution, time_period, yea
                     filename = f'{r_filename}_var_{year}_{month}_{day}.nc'
                     path = f'{folder}/{filename}'
                     da = xr.open_dataset(path)['var']
+
+                    folder = f'{folder_scratch}/temp_data/{r_folder}/{r_filename}'
+                    filename = f'{r_filename}_var2_{year}_{month}_{day}.nc'
+                    path = f'{folder}/{filename}'
+                    da2 = xr.open_dataset(path)['var']
                 except:
                     print('no saved test data')
                     print('getting data for saving ..')
@@ -72,27 +78,35 @@ def get_metric(dataset, t_freq, lon_area, lat_area, resolution, time_period, yea
                     os.makedirs(os.path.dirname(path), exist_ok=True)
                     xr.Dataset({'var': da}).to_netcdf(path)
                     print('saved test data ..')
+
+                    da2 = gD.get_data(process_request2, process_data_further = post_process_data)                                                      # get data (for test)
+                    os.makedirs(os.path.dirname(path), exist_ok=True)
+                    xr.Dataset({'var': da2}).to_netcdf(path)
+                    print('saved test data2 ..')
             else:
                 print('getting data ..')
-                da = gD.get_data(process_request, process_data_further = post_process_data)       
+                da = gD.get_data(process_request, process_data_further = post_process_data)   
+                da2 = gD.get_data(process_request2, process_data_further = post_process_data)   
             # -- get metric --     
-            data_objects = [da, process_request, count]                                                                              
-            metric.append(mC.calculate_metric(data_objects))
+            # print(da)
+            # exit()
+            data_objects = [da, process_request, count, da2]                                                                              
+            mC.calculate_metric(data_objects)
             print(f'finished year: {year} month: {month} day: {day}')
             if test:    
                 os.remove(path)
             count += 1
         # exit()
-    ds = xr.concat(metric, dim='time')
-    print('concatenated section results')
-    # -- save result from section --
-    print(f'saving section results from: {dataset}')
-    folder = f'{folder_scratch}/temo_calc/{r_folder}/{r_filename}'
-    filename = f'{r_filename}_{section_range}.nc'
-    path = f'{folder}/{filename}'
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    ds.to_netcdf(path, mode="w")
-    print('saved section result')
+    # ds = xr.concat(metric, dim='time')
+    # print('concatenated section results')
+    # # -- save result from section --
+    # print(f'saving section results from: {dataset}')
+    # folder = f'{folder_scratch}/temo_calc/{r_folder}/{r_filename}'
+    # filename = f'{r_filename}_{section_range}.nc'
+    # path = f'{folder}/{filename}'
+    # os.makedirs(os.path.dirname(path), exist_ok=True)
+    # ds.to_netcdf(path, mode="w")
+    # print('saved section result')
 
 
 # == concatenate results ==
@@ -134,6 +148,10 @@ def main(switch, dataset, t_freq, lon_area, lat_area, resolution, time_period, y
 
 # == when this script is ran / submitted ==
 if __name__ == '__main__':
+    # ds = xr.open_dataset('/g/data/nf33/cb4968/metrics/models/ICON/doc_metrics/i_org/icon_d3hp003/i_org_icon_d3hp003_3hrly_100-149_-13-13_3600x1800_2020-03_2021-02.nc')
+    # print(ds)
+    # exit()
+
     if not os.environ.get("PBS_SCRIPT"):                                                                                                # when run interactively (test)
         datasets, t_freqs, lon_areas, lat_areas, resolutions, time_periods = jS.set_specs()                                             # all specs
         for i, (t, lat, lon, r, d, p) in enumerate(itertools.product(t_freqs,                                                           #

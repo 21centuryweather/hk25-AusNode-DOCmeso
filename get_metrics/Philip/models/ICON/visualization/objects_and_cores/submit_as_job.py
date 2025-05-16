@@ -39,7 +39,7 @@ sJ = import_relative_module('util_qsub.submission_funcs',   'utils')
 # == Set specs ==
 def set_specs():
     datasets = (                                                                                                                    # Models ordered by change in temperature with warming    
-        'IMERG',                                                                                                                     # 1
+        'icon_d3hp003',                                                                                                                     # 1
         )                                                                                                                           #
     t_freqs = (                                                                                                                     #
         # 'hrly',                                                                                                                   # animations
@@ -68,7 +68,7 @@ def set_specs():
         0.1,                                                                                                                        # CMIP, lowest common            
         )                                                                                                                           #
     time_periods = (                                                                                                                # time_periods for metric (can be looped)
-        '2020-03:2021-02',                                                                                                          # full
+        '2020-12:2021-02',                                                                                                          # full
         )                                                                                                                           #
     return datasets, t_freqs, lon_areas, lat_areas, resolutions, time_periods
 
@@ -104,7 +104,7 @@ def get_path(dataset, t_freq, lon_area, lat_area, resolution, time_period):
 # == main func ==
 def main():
     folder_work, folder_scratch, SU_project, storage_project, data_projects = mS.get_user_specs(show = True)                        # user settings
-    switch =        {'calc': True, 'concat': True}                                                                                  # calculate section and then concat
+    switch =        {'calc': True, 'concat': False}                                                                                  # calculate section and then concat
     datasets, t_freqs, lon_areas, lat_areas, resolutions, time_periods = set_specs()                                                # all specs
     job_ids_concat = []                                                                                                             # make next spec combination dependent on completion of previous combination
     n_jobs_calc_tot = 0                                                                                                             #

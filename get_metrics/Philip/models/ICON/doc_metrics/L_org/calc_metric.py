@@ -11,6 +11,7 @@ import numpy as np
 import xarray as xr
 from pathlib import Path
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
 
 # -- util- and local scripts --
 import os
@@ -35,7 +36,7 @@ def import_relative_module(module_name, file_path):
     return importlib.import_module(module_path)
 mS = import_relative_module('user_specs',                                                   'utils')
 cW = import_relative_module('util_calc.area_weighting.globe_area_weight',                   'utils')
-doc = import_relative_module('util_calc.doc_metrics.area_fraction.area_fraction',           'utils')
+doc = import_relative_module('util_calc.doc_metrics.L_org.L_org_calc',                      'utils')
 pF = import_relative_module('util_plot.map_subplot',                                        'utils')
 cC = import_relative_module('util_calc.doc_metrics.conv_cores.find_conv_cores',             'utils')
 
@@ -45,11 +46,11 @@ def get_metric(da, time_period, metric_var = 'pr_percentiles_95'):
     ''' convective threshold '''
     folder_work, folder_scratch, SU_project, storage_project, data_projects = mS.get_user_specs(show = False)                        # user settings
     # -- specify metric --
-    data_tyoe_group =   'observations'
-    data_type =         'IMERG'
+    data_tyoe_group =   'models'
+    data_type =         'ICON'
     metric_group =      'precip'
     metric_name =       'pr_percentiles'
-    dataset =           'IMERG'
+    dataset =           'icon_d3hp003'
     # t_freq =            'hrly'
     t_freq =            '3hrly'
     lon_area =          '0:360'
@@ -78,6 +79,7 @@ def get_metric(da, time_period, metric_var = 'pr_percentiles_95'):
         print('exiting')
         exit()
     return da_threshold
+
 
 # def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines):
 #     # print(ds)
@@ -181,7 +183,7 @@ def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines
     # exit()
 
     ax = pF.plot(fig, nrows, ncols, row, col, axes, ds, ds_contour, ds_ontop, lines)
-    return fig
+    return fig, ax
 
 
 # == calculate metric ==
@@ -200,7 +202,7 @@ def calculate_metric(data_objects):
     da_area = cW.get_area_matrix(da.lat, da.lon)   
 
     # -- convective threshold variations --
-    quantile_thresholds = [0.95, 0.97, 0.99] #0.9, 
+    quantile_thresholds = [0.95] # , 0.97, 0.99] #0.9, 
     for quant in quantile_thresholds:
         quant_str = f'pr_percentiles_{int(quant *100)}'
         threshold = get_metric(da, time_period = '2020-03:2021-02', metric_var = quant_str).mean(dim = 'time').data
@@ -214,9 +216,17 @@ def calculate_metric(data_objects):
             # print(da_timestep)
             # exit()
             # -- calculate metric --
+
+            # -- cores --
+            _, lat_coords, lon_coords = cC.find_conv_cores(da_timestep, threshold, exceed_threshold = True)
+
             # -- convective objects --
             conv_regions = (da_timestep > threshold) * 1
-            metric_timestep = doc.area_fraction(conv_regions, da_area)
+            r_bin_edges = np.arange(0, 2500, 10)
+            L_org, L_ir, Besag_obs, Besag_theor, r_bin_edges = doc.get_L_org(lat_coords, lon_coords, da_area, r_bin_edges, periodic_lon = False)
+            # print(L_org)
+            # exit()
+            metric_timestep = L_org
             metric_timestep = xr.DataArray(metric_timestep)
             metric_timestep = metric_timestep.expand_dims(dim = 'time')
             metric_timestep = metric_timestep.assign_coords(time=[timestep.values])
@@ -250,7 +260,7 @@ def calculate_metric(data_objects):
                 # print(da_plot)
                 # exit()
                 da_ontop = xr.where(conv_regions!= 0, 1, np.nan)    # .drop('time') 
-                fig = plot_subplot(title,
+                fig, ax = plot_subplot(title,
                                 fig = fig,
                                 nrows = nrows,
                                 ncols = ncols,
@@ -260,6 +270,7 @@ def calculate_metric(data_objects):
                                 ds_ontop = xr.Dataset({'var': da_ontop}), 
                                 lines = [],
                                 )
+                ax.scatter(lon_coords, lat_coords, transform=ccrs.PlateCarree(), color = 'r', s = 2)
                 # -- save figure --
                 folder = f'{os.path.dirname(__file__)}/plots/snapshots'
                 filename = f'snapshot_{count * len(da.time) + i}.png'
@@ -283,4 +294,3 @@ def calculate_metric(data_objects):
     # print(ds)
     # exit()
     return ds
-

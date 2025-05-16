@@ -5,6 +5,7 @@ __pycache__/
 
 # pngs
 *.png
+*.nc
 
 # C extensions
 *.so

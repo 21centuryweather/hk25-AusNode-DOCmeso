@@ -11,6 +11,7 @@ import numpy as np
 import xarray as xr
 from pathlib import Path
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
 
 # -- util- and local scripts --
 import os
@@ -34,8 +35,6 @@ def import_relative_module(module_name, file_path):
         module_path = f"{module_base}.{module_name}"
     return importlib.import_module(module_path)
 mS = import_relative_module('user_specs',                                                   'utils')
-cW = import_relative_module('util_calc.area_weighting.globe_area_weight',                   'utils')
-doc = import_relative_module('util_calc.doc_metrics.area_fraction.area_fraction',           'utils')
 pF = import_relative_module('util_plot.map_subplot',                                        'utils')
 cC = import_relative_module('util_calc.doc_metrics.conv_cores.find_conv_cores',             'utils')
 
@@ -45,11 +44,11 @@ def get_metric(da, time_period, metric_var = 'pr_percentiles_95'):
     ''' convective threshold '''
     folder_work, folder_scratch, SU_project, storage_project, data_projects = mS.get_user_specs(show = False)                        # user settings
     # -- specify metric --
-    data_tyoe_group =   'observations'
-    data_type =         'IMERG'
+    data_tyoe_group =   'models'
+    data_type =         'ICON'
     metric_group =      'precip'
     metric_name =       'pr_percentiles'
-    dataset =           'IMERG'
+    dataset =           'icon_d3hp003'
     # t_freq =            'hrly'
     t_freq =            '3hrly'
     lon_area =          '0:360'
@@ -78,6 +77,39 @@ def get_metric(da, time_period, metric_var = 'pr_percentiles_95'):
         print('exiting')
         exit()
     return da_threshold
+
+# == metric funcs ==
+def get_metric_saved(data_type_group, data_type, dataset, t_freq, metric_group, metric_name, lon_area, lat_area, resolution, p_id, metric_var):
+    folder_work, folder_scratch, SU_project, storage_project, data_projects = mS.get_user_specs(show = False)           # user settings
+    # -- find path --
+    folder = f'{folder_work}/metrics/{data_type_group}/{data_type}/{metric_group}/{metric_name}/{dataset}'
+    filename = (                                                                                                        # base result_filename
+            f'{metric_name}'                                                                                            #
+            f'_{dataset}'                                                                                               #
+            f'_{t_freq}'                                                                                                #
+            f'_{lon_area.split(":")[0]}-{lon_area.split(":")[1]}'                                                       #
+            f'_{lat_area.split(":")[0]}-{lat_area.split(":")[1]}'                                                       #
+            f'_{int(360/resolution)}x{int(180/resolution)}'                                                             #
+            f'_{p_id.split(":")[0]}_{p_id.split(":")[1]}'                                                 #
+            )       
+    path = f'{folder}/{filename}.nc'
+    # -- find metric -- 
+    metric = xr.open_dataset(path)
+    if not metric_var:
+        print('choose a metric variation')
+        print(metric)
+        print('exiting')
+        exit()
+    else:
+        # -- get metric variation -- 
+        metric = metric[metric_var]
+    # try:
+    #     cA.detrend_month_anom(metric)                                                                                   # correlate anomalies (won't be able to do this with nan)
+    # except:                                                                                                             #
+    #     metric = metric.ffill(dim='time')                                                                               # Forward fill   (fill last value for 3 month rolling mean)
+    #     metric = metric.bfill(dim='time')                                                                               # Backward fill  (fill first value for 3 month rolling mean)
+    return metric
+
 
 # def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines):
 #     # print(ds)
@@ -170,7 +202,7 @@ def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines
         ds_contour.attrs.update({
             # -- contour --
             'name': 'var', 
-            'threshold': [ds_contour["var"].quantile(0.5), ds_contour["var"].quantile(0.9)], 
+            'threshold': [ds_contour["var"].quantile(0.5)], # ds_contour["var"].quantile(0.9)], 
             'color': 'k', 
             'linewidth': 0.5,
             'contour_text_size': 4.5,
@@ -181,7 +213,7 @@ def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines
     # exit()
 
     ax = pF.plot(fig, nrows, ncols, row, col, axes, ds, ds_contour, ds_ontop, lines)
-    return fig
+    return fig, ax
 
 
 # == calculate metric ==
@@ -192,95 +224,86 @@ def calculate_metric(data_objects):
 
     # == create metric ==
     # -- check data --
-    da, process_requestd, count = data_objects
-    # print(da)
+    da, process_requestd, count, da2 = data_objects
+    # print(da2)
     # exit()
 
-    # -- for area weighting --
-    da_area = cW.get_area_matrix(da.lat, da.lon)   
+    # == get other metrics to help plot ==
+    quant = 0.95
+    quant_str = f'pr_percentiles_{int(quant *100)}'
+    threshold = get_metric(da, time_period = '2020-03:2021-02', metric_var = quant_str).mean(dim = 'time').data
+    t_freq =    '3hrly'
+    x1_tfreq,   x1_group,   x1_name,    x1_var,     x1_label,   x1_units =  t_freq, 'precip',      'pr_percentiles',    'pr_percentiles_95',                        r'pr${95}$',    r'[mm day%^{-1}%]'
+    x2_tfreq,   x2_group,   x2_name,    x2_var,     x2_label,   x2_units =  t_freq, 'doc_metrics', 'area_fraction',     'area_fraction_thres_pr_percentiles_95',    r'A$_f$',       r'[%]'
+    x3_tfreq,   x3_group,   x3_name,    x3_var,     x3_label,   x3_units =  t_freq, 'doc_metrics', 'mean_area',         'mean_area_thres_pr_percentiles_95',        r'A$_m$',       r'[km$^2$]'
+    x4_tfreq,   x4_group,   x4_name,    x4_var,     x4_label,   x4_units =  t_freq, 'doc_metrics', 'i_org',             'i_org_thres_pr_percentiles_95',            r'I$_org$',     r'[]'
+    # x5_tfreq,   x5_group,   x5_name,    x5_var,     x5_label,   x5_units =  t_freq, 'doc_metrics', 'L_org',             'L_org_thres_pr_percentiles_95',            r'I$_org$',     r'[]'
 
-    # -- convective threshold variations --
-    quantile_thresholds = [0.95, 0.97, 0.99] #0.9, 
-    for quant in quantile_thresholds:
-        quant_str = f'pr_percentiles_{int(quant *100)}'
-        threshold = get_metric(da, time_period = '2020-03:2021-02', metric_var = quant_str).mean(dim = 'time').data
+    data_type_group, data_type, dataset  =   'models', 'ICON', 'icon_d3hp003'
+    res =       0.1         
+    lon_area =  '0:360'  
+    lat_area =  '-30:30'       
+    p_id = '2020-03:2021-02'
+    x1 = get_metric_saved(data_type_group, data_type, dataset, x1_tfreq, x1_group, x1_name, lon_area, lat_area, res, p_id, x1_var) 
+    lat_area =  '-13:13'   
+    lon_area =  '100:149'
+    x2 = get_metric_saved(data_type_group, data_type, dataset, x2_tfreq, x2_group, x2_name, lon_area, lat_area, res, p_id, x2_var) 
+    x3 = get_metric_saved(data_type_group, data_type, dataset, x3_tfreq, x3_group, x3_name, lon_area, lat_area, res, p_id, x3_var) 
+    x4 = get_metric_saved(data_type_group, data_type, dataset, x4_tfreq, x4_group, x4_name, lon_area, lat_area, res, p_id, x4_var) 
+    # x5 = get_metric(data_type_group, data_type, dataset, x5_tfreq, x5_group, x5_name, lon_area, lat_area, res, p_id, x5_var) 
+    pr_mean = xr.open_dataset('/scratch/nf33/hk25_DOCmeso/Mean_prec_all.nc')['pr'].sel(dataset = 'ICON')
 
-        # --loop through timesteps --
-        metric_calc = []
-        for i, timestep in enumerate(da.time):
-            da_timestep = da.isel(time = i)
-            kernel_size, decay_distance = 8, 1
-            da_timestep = cC.apply_smoothing(da_timestep, kernel_size, decay_distance)
-            # print(da_timestep)
-            # exit()
-            # -- calculate metric --
-            # -- convective objects --
-            conv_regions = (da_timestep > threshold) * 1
-            metric_timestep = doc.area_fraction(conv_regions, da_area)
-            metric_timestep = xr.DataArray(metric_timestep)
-            metric_timestep = metric_timestep.expand_dims(dim = 'time')
-            metric_timestep = metric_timestep.assign_coords(time=[timestep.values])
-            metric_calc.append(metric_timestep)
+    # --loop through timesteps --
+    for i, timestep in enumerate(da.time):
+        da_timestep = da.isel(time = i)
+        da2_timestep = da2.isel(time = i)
+        # -- smoothing --
+        kernel_size, decay_distance = 8, 10
+        pr_mean = cC.apply_smoothing(pr_mean, kernel_size, decay_distance)
 
-            # -- visualize metric --
-            plot = False
-            if plot:
-                # # -- create figure --
-                # width, height = 6.27, 9.69                      # max size (for 1 inch margins)
-                # width, height = 0.75 * width, 0.2 * height      # modulate size and subplot distribution
-                # ncols, nrows  = 1, 1
-                # fig, axes = plt.subplots(nrows, ncols, figsize = (width, height))
-
-                # -- create figure --
-                width, height = 6.27, 9.69                      # max size (for 1 inch margins)
-                width, height = 1 * width, 0.4 * height      # modulate size and subplot distribution
-                ncols, nrows  = 1, 1
-                fig, axes = plt.subplots(nrows, ncols, figsize = (width, height))
-
-                # -- plot data --
-                metric_plot = metric_timestep.data[0]
-                spatial_mean = da_timestep.mean(dim = ('lat', 'lon'))
-                da_plot = da_timestep # ((da_timestep - spatial_mean)).drop('time')  # anomalies from the spatial-mean
-                # da_plot =  da_plot / da_plot.std()
-                title = (
-                    f'time:{str(timestep.data)[2:18]}\n'   
-                    f'{metric_name}: {metric_plot:.2e} [%],         '
-                    f'mean: {spatial_mean.data:.2e} [mm/day]'
-                    )
-                # print(da_plot)
-                # exit()
-                da_ontop = xr.where(conv_regions!= 0, 1, np.nan)    # .drop('time') 
-                fig = plot_subplot(title,
-                                fig = fig,
-                                nrows = nrows,
-                                ncols = ncols,
-                                axes = axes,
-                                ds = xr.Dataset({'var': da_plot}), 
-                                ds_contour = None, 
-                                ds_ontop = xr.Dataset({'var': da_ontop}), 
-                                lines = [],
-                                )
-                # -- save figure --
-                folder = f'{os.path.dirname(__file__)}/plots/snapshots'
-                filename = f'snapshot_{count * len(da.time) + i}.png'
-                path = f'{folder}/{filename}'
-                os.makedirs(os.path.dirname(path), exist_ok=True)
-                os.remove(path) if os.path.exists(path) else None
-                fig.savefig(path)
-                print(f'plot saved at: {path}')
-                plt.close(fig)
-        #         exit()
-        # exit()
-
-        # -- concatenate timesteps --
-        metric_calc = xr.concat(metric_calc, dim = 'time')
-        # print(metric_calc)
-        # exit()
-
-        # -- fill xr.dataset with metric --
-        ds[f'{metric_name}_thres_{quant_str}'] = metric_calc
-
-    # print(ds)
-    # exit()
+        kernel_size, decay_distance = 8, 10
+        da_timestep = cC.apply_smoothing(da_timestep, kernel_size, decay_distance)
+        # -- cores --
+        _, lat_coords, lon_coords = cC.find_conv_cores(da_timestep, threshold, exceed_threshold = True)
+        # -- convective objects --
+        conv_regions = (da_timestep > threshold) * 1
+        # -- visualize whole tropics --
+        # -- visualize MTC --
+        plot = True
+        if plot:
+            # -- create figure --
+            width, height = 6.27, 9.69                      # max size (for 1 inch margins)
+            width, height = 1 * width, 0.4 * height         # modulate size and subplot distribution
+            ncols, nrows  = 1, 1
+            fig, axes = plt.subplots(nrows, ncols, figsize = (width, height))
+            # -- data for plot --
+            da_plot = da2_timestep
+            title = (
+                f'time:{str(timestep.data)[2:18]}\n'
+                )
+            da_ontop = xr.where(conv_regions!= 0, 1, np.nan)    # .drop('time') 
+            fig, ax = plot_subplot(title,
+                            fig = fig,
+                            nrows = nrows,
+                            ncols = ncols,
+                            axes = axes,
+                            # ds = xr.Dataset({'var': da_plot}), 
+                            ds_contour = xr.Dataset({'var': pr_mean}), 
+                            # ds_ontop = xr.Dataset({'var': da_ontop}), 
+                            lines = [],
+                            )
+            ax.scatter(lon_coords, lat_coords, transform=ccrs.PlateCarree(), color = 'r', s = 2)
+            # -- save figure --
+            folder = f'/scratch/nf33/cb4968/plots/snapshots'
+            filename = f'snapshot_{count * len(da.time) + i}.png'
+            path = f'{folder}/{filename}'
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            os.remove(path) if os.path.exists(path) else None
+            fig.savefig(path)
+            print(f'plot saved at: {path}')
+            plt.close(fig)
+            exit()
+        exit()
     return ds
+
 

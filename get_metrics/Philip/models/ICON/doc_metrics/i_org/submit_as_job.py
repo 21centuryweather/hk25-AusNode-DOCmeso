@@ -39,7 +39,7 @@ sJ = import_relative_module('util_qsub.submission_funcs',   'utils')
 # == Set specs ==
 def set_specs():
     datasets = (                                                                                                                    # Models ordered by change in temperature with warming    
-        'IMERG',                                                                                                                     # 1
+        'icon_d3hp003',                                                                                                                     # 1
         )                                                                                                                           #
     t_freqs = (                                                                                                                     #
         # 'hrly',                                                                                                                   # animations

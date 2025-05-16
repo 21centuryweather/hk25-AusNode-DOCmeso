@@ -36,12 +36,12 @@ def import_relative_module(module_name, file_path):
 mS = import_relative_module('user_specs',                   'utils')
 jS = import_relative_module('submit_as_job',                __file__)
 mC = import_relative_module('calc_metric',                  __file__)
-gD = import_relative_module('util_obs.get_imerg_data',      'utils')
+gD = import_relative_module('util_um.get_um_data',      'utils')
 
 
 # == process data ==
 def post_process_data(da):
-    # da = da * 24                # change units from [mm/hr -> mm/day], not necessary
+    da = da * 60 * 60                # change units from [mm/hr -> mm/day], not necessary
     da = da.fillna(0)
     return da
 
@@ -57,7 +57,7 @@ def get_metric(dataset, t_freq, lon_area, lat_area, resolution, time_period, yea
         for day in days:
             # -- get data --      
             time_str =      f'{year}-{int(month):02d}-{int(day):02d}'
-            process_request = ['precipitation', 'IMERG', time_str, t_freq, lon_area, lat_area, resolution]
+            process_request = ['pr', dataset, time_str, t_freq, lon_area, lat_area, resolution]
             if test:                                                                                                                            # for quickly testing timestep
                 print('getting test data')
                 try:
@@ -76,6 +76,8 @@ def get_metric(dataset, t_freq, lon_area, lat_area, resolution, time_period, yea
                 print('getting data ..')
                 da = gD.get_data(process_request, process_data_further = post_process_data)       
             # -- get metric --     
+            # print(da)
+            # exit()
             data_objects = [da, process_request, count]                                                                              
             metric.append(mC.calculate_metric(data_objects))
             print(f'finished year: {year} month: {month} day: {day}')

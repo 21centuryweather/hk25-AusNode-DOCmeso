@@ -93,6 +93,7 @@ def get_data(process_request, process_data_further):
     filename = f'PT{time_freq}_point_{zoom}_atm.zarr'
     ds  = xr.open_zarr(f'{folder}/{filename}')
     ds  = ds.sel(time = time_str)
+    # [print(f) for f in list(ds.data_vars.keys())]
     # print(ds)
     # exit()
 

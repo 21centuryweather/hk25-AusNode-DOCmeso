@@ -39,7 +39,7 @@ sJ = import_relative_module('util_qsub.submission_funcs',   'utils')
 # == Set specs ==
 def set_specs():
     datasets = (                                                                                                                    # Models ordered by change in temperature with warming    
-        'IMERG',                                                                                                                     # 1
+        'n2560_RAL3p3',                                                                                                                     # 1
         )                                                                                                                           #
     t_freqs = (                                                                                                                     #
         # 'hrly',                                                                                                                   # animations
@@ -124,7 +124,7 @@ def main():
         [os.remove(path_temp) for path_temp in temp_files]                                                                          #
         # -- job resources (calc) --
         n_jobs_calc = 12  
-        walltime_calc = '1:30:00'                                                                                                   # job time for complete time_period
+        walltime_calc = '2:30:00'                                                                                                   # job time for complete time_period
         mem_calc = '50GB'                                                                                                           #
         ncpus_calc = 1                                                                                                              # if parallelizing, do it on the months
         # -- divide time_period calc, in n sections -- 
