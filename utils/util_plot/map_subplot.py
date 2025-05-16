@@ -65,6 +65,7 @@ def plot_ax_title(ds, fig, ax):
             ds.attrs.get('axtitle_label', ''),                          
             fontsize = ds.attrs.get('axtitle_fontsize', 5), 
             transform=fig.transFigure,
+            linespacing = 0.75
             # fontweight = 'bold'
             )
 

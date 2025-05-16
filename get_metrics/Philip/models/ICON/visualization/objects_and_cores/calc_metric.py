@@ -163,7 +163,7 @@ def get_metric_saved(data_type_group, data_type, dataset, t_freq, metric_group, 
 
     # return fig
 
-def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines):
+def plot_subplot(title, fig, nrows, ncols, axes, ds = None, ds_contour = None, ds_ontop = None, lines = []):
     # print(ds)
     # print(ds['var'])
     # exit()
@@ -173,6 +173,8 @@ def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines
     yticks = [-10, 0, 10]
 
     # print(ds)
+    symbol = r'$\sigma$'
+    some_text = r'OLR$_{mean}$'
     add_size = 4
     ds.attrs.update({ 
         # -- format axes --
@@ -180,19 +182,23 @@ def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines
         'hide_colorbar': False, 'cbar_height': 0.035, 'cbar_pad': 0.12, 'cbar_label_pad': 0.1,   
         'xlabel_pad': 0.09,   
         'ylabel_pad': 0.085,
-        'axtitle_xpad': 0, 'axtitle_ypad': 0.025,
+        'axtitle_xpad': 0.015, 'axtitle_ypad': 0.015,
 
         # -- format plot elements --
-        'vmin': None, 'vmax': None, 
-        'cmap': 'Blues', #'RdBu', 
-    
+        'vmin': -2, 'vmax': 2, 
+        # 'cmap': 'RdBu', 
+        # 'vmin': -925379.2375, 'vmax': 925379.2375, 
+        'cmap': 'GnBu',
+        # 'cmap': 'Blues',
+        # 'cmap': 'PuBu',
+
         # -- format text --
-        'cbar_label': f'std from mean [Nb]',                    'cbar_fontsize': 8 + add_size, 'cbar_numsize': 6 + add_size,             
+        'cbar_label': f'{symbol}(OLR) []', 'cbar_fontsize': 6 + add_size, 'cbar_numsize': 6 + add_size,             
         'hide_xticks': False,   'xticks': xticks,               'xticks_fontsize': 6.5 + add_size,
         'hide_xlabel': False,   'xlabel_label': 'longitude',    'xlabel_fontsize': 6.5 + add_size,
         'hide_yticks': False,   'yticks': yticks,               'yticks_fontsize': 6 + add_size,
         'hide_ylabel': False,   'ylabel_label': 'latitude',     'ylabel_fontsize': 6.5 + add_size,
-        'axtitle_label':        title,                          'axtitle_fontsize': 9 + add_size -1,
+        'axtitle_label':        title,                          'axtitle_fontsize': 10 + add_size -1,
         'coastline_width': 0.6,
         'line_dots_size': 0.1,
         })
@@ -202,8 +208,8 @@ def plot_subplot(title, fig, nrows, ncols, axes, ds, ds_contour, ds_ontop, lines
         ds_contour.attrs.update({
             # -- contour --
             'name': 'var', 
-            'threshold': [ds_contour["var"].quantile(0.5)], # ds_contour["var"].quantile(0.9)], 
-            'color': 'k', 
+            'threshold': [ds_contour["var"].quantile(0.25)], # ds_contour["var"].quantile(0.9)], 
+            'color': 'g', 
             'linewidth': 0.5,
             'contour_text_size': 4.5,
             })
@@ -233,10 +239,10 @@ def calculate_metric(data_objects):
     quant_str = f'pr_percentiles_{int(quant *100)}'
     threshold = get_metric(da, time_period = '2020-03:2021-02', metric_var = quant_str).mean(dim = 'time').data
     t_freq =    '3hrly'
-    x1_tfreq,   x1_group,   x1_name,    x1_var,     x1_label,   x1_units =  t_freq, 'precip',      'pr_percentiles',    'pr_percentiles_95',                        r'pr${95}$',    r'[mm day%^{-1}%]'
+    x1_tfreq,   x1_group,   x1_name,    x1_var,     x1_label,   x1_units =  t_freq, 'precip',      'pr_percentiles',    'pr_percentiles_95',                        r'pr$_{95}$',    r'[mm day$^{-1}$]'
     x2_tfreq,   x2_group,   x2_name,    x2_var,     x2_label,   x2_units =  t_freq, 'doc_metrics', 'area_fraction',     'area_fraction_thres_pr_percentiles_95',    r'A$_f$',       r'[%]'
     x3_tfreq,   x3_group,   x3_name,    x3_var,     x3_label,   x3_units =  t_freq, 'doc_metrics', 'mean_area',         'mean_area_thres_pr_percentiles_95',        r'A$_m$',       r'[km$^2$]'
-    x4_tfreq,   x4_group,   x4_name,    x4_var,     x4_label,   x4_units =  t_freq, 'doc_metrics', 'i_org',             'i_org_thres_pr_percentiles_95',            r'I$_org$',     r'[]'
+    x4_tfreq,   x4_group,   x4_name,    x4_var,     x4_label,   x4_units =  t_freq, 'doc_metrics', 'i_org',             'i_org_thres_pr_percentiles_95',            r'I$_{org}$',     r'[]'
     # x5_tfreq,   x5_group,   x5_name,    x5_var,     x5_label,   x5_units =  t_freq, 'doc_metrics', 'L_org',             'L_org_thres_pr_percentiles_95',            r'I$_org$',     r'[]'
 
     data_type_group, data_type, dataset  =   'models', 'ICON', 'icon_d3hp003'
@@ -257,6 +263,9 @@ def calculate_metric(data_objects):
     for i, timestep in enumerate(da.time):
         da_timestep = da.isel(time = i)
         da2_timestep = da2.isel(time = i)
+        # print(da2_timestep.quantile([0.5, 0.8, 0.9]))
+        # exit()
+
         # -- smoothing --
         kernel_size, decay_distance = 8, 10
         pr_mean = cC.apply_smoothing(pr_mean, kernel_size, decay_distance)
@@ -277,9 +286,15 @@ def calculate_metric(data_objects):
             ncols, nrows  = 1, 1
             fig, axes = plt.subplots(nrows, ncols, figsize = (width, height))
             # -- data for plot --
-            da_plot = da2_timestep
+            spatial_mean = da2_timestep.mean(dim = ('lat', 'lon'))
+            da_plot = ((da2_timestep - spatial_mean)).drop('time')  # anomalies from the spatial-mean
+            da_plot =  da_plot / da_plot.std()
+            # da_plot = da2_timestep
             title = (
-                f'time:{str(timestep.data)[2:18]}\n'
+                f'time:{str(timestep.data)[2:18]}    '
+                f'{x4_label}: {x4.sel(time = timestep).data:.2e} {x4_units}\n'
+                f'{x2_label}: {x2.sel(time = timestep).data:.2e} {x2_units}               '
+                f'{x3_label}: {x3.sel(time = timestep).data:.2e} {x3_units}'
                 )
             da_ontop = xr.where(conv_regions!= 0, 1, np.nan)    # .drop('time') 
             fig, ax = plot_subplot(title,
@@ -287,14 +302,14 @@ def calculate_metric(data_objects):
                             nrows = nrows,
                             ncols = ncols,
                             axes = axes,
-                            # ds = xr.Dataset({'var': da_plot}), 
-                            ds_contour = xr.Dataset({'var': pr_mean}), 
-                            # ds_ontop = xr.Dataset({'var': da_ontop}), 
+                            ds = xr.Dataset({'var': -da_plot}), 
+                            # ds_contour = xr.Dataset({'var': pr_mean}), 
+                            ds_ontop = xr.Dataset({'var': da_ontop}), 
                             lines = [],
                             )
-            ax.scatter(lon_coords, lat_coords, transform=ccrs.PlateCarree(), color = 'r', s = 2)
+            ax.scatter(lon_coords, lat_coords, transform=ccrs.PlateCarree(), color = 'r', s = 0.25)
             # -- save figure --
-            folder = f'/scratch/nf33/cb4968/plots/snapshots'
+            folder = f'/scratch/nf33/cb4968/plots/icon_snapshots'
             filename = f'snapshot_{count * len(da.time) + i}.png'
             path = f'{folder}/{filename}'
             os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -302,8 +317,8 @@ def calculate_metric(data_objects):
             fig.savefig(path)
             print(f'plot saved at: {path}')
             plt.close(fig)
-            exit()
-        exit()
+            # exit()
+    # exit()
     return ds
 
 

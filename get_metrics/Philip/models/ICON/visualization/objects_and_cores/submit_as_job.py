@@ -104,7 +104,7 @@ def get_path(dataset, t_freq, lon_area, lat_area, resolution, time_period):
 # == main func ==
 def main():
     folder_work, folder_scratch, SU_project, storage_project, data_projects = mS.get_user_specs(show = True)                        # user settings
-    switch =        {'calc': True, 'concat': False}                                                                                  # calculate section and then concat
+    switch =        {'calc': True, 'concat': True}                                                                                  # calculate section and then concat
     datasets, t_freqs, lon_areas, lat_areas, resolutions, time_periods = set_specs()                                                # all specs
     job_ids_concat = []                                                                                                             # make next spec combination dependent on completion of previous combination
     n_jobs_calc_tot = 0                                                                                                             #
@@ -123,7 +123,7 @@ def main():
         temp_files = [f'{folder}/{f}' for f in os.listdir(folder) if f.endswith('.nc')]                                             # clearing the folder that is filled with partial results
         [os.remove(path_temp) for path_temp in temp_files]                                                                          #
         # -- job resources (calc) --
-        n_jobs_calc = 12  
+        n_jobs_calc = 1  
         walltime_calc = '1:30:00'                                                                                                   # job time for complete time_period
         mem_calc = '50GB'                                                                                                           #
         ncpus_calc = 1                                                                                                              # if parallelizing, do it on the months

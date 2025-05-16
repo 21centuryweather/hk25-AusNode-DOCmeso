@@ -65,12 +65,12 @@ def get_metric(dataset, t_freq, lon_area, lat_area, resolution, time_period, yea
                     folder = f'{folder_scratch}/temp_data/{r_folder}/{r_filename}'
                     filename = f'{r_filename}_var_{year}_{month}_{day}.nc'
                     path = f'{folder}/{filename}'
-                    da = xr.open_dataset(path)['var']
-
                     folder = f'{folder_scratch}/temp_data/{r_folder}/{r_filename}'
                     filename = f'{r_filename}_var2_{year}_{month}_{day}.nc'
-                    path = f'{folder}/{filename}'
-                    da2 = xr.open_dataset(path)['var']
+                    path2 = f'{folder}/{filename}'
+
+                    da = xr.open_dataset(path)['var']
+                    da2 = xr.open_dataset(path2)['var']
                 except:
                     print('no saved test data')
                     print('getting data for saving ..')
@@ -80,8 +80,8 @@ def get_metric(dataset, t_freq, lon_area, lat_area, resolution, time_period, yea
                     print('saved test data ..')
 
                     da2 = gD.get_data(process_request2, process_data_further = post_process_data)                                                      # get data (for test)
-                    os.makedirs(os.path.dirname(path), exist_ok=True)
-                    xr.Dataset({'var': da2}).to_netcdf(path)
+                    os.makedirs(os.path.dirname(path2), exist_ok=True)
+                    xr.Dataset({'var': da2}).to_netcdf(path2)
                     print('saved test data2 ..')
             else:
                 print('getting data ..')
