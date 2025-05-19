@@ -31,7 +31,7 @@ def main(folder):
     # -- create gif --
     result_path = f'{os.path.splitext(__file__)[0]}_output.gif'
     duration = 0.5
-    with imageio.get_writer(result_path, mode='I', duration=duration, loop=2) as writer:
+    with imageio.get_writer(result_path, mode='I', duration=duration, loop=1) as writer:
         for path in png_files:
             image = imageio.imread(path)
             writer.append_data(image)

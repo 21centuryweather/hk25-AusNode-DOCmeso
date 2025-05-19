@@ -52,15 +52,9 @@ def find_weights(lat_c, lon_c, lat, r_bin_edges):
 
 
 # == metric calc ==
-def get_L_org(conv_regions, da_area, r_bin_edges):
-    # -- identify cores --
-    lat, lon = conv_regions.lat.data, conv_regions.lon.data
-    I, J = zip(*np.argwhere(conv_regions.data))                                                                         # All spatial coordinates with convective points (i, j)
-    I, J = list(I), list(J)                                                                                             # index structured as (lat1, lon1), (lat1, lon2) ..
-    lat_coords, lon_coords = lat[I], lon[J]                                                                             # lat, lon coordinates of all cores
-    n_c = len(lat_coords)                                                                                               # number of "cores"
-
+def get_L_org(lat_coords, lon_coords, da_area, r_bin_edges):
     # -- core evaluation -- 
+    n_c = len(lat_coords)                                                                                               # number of "cores"
     cum_counting = np.zeros((n_c, len(r_bin_edges) - 1))                                                                # considering bin edges (one less bin than bin edges)
     weights = np.ones((n_c, len(r_bin_edges) - 1))                                                                      # This weights the number of included points with a greater weight if part of the circle is outside the domain
     for c, (lat_c, lon_c) in enumerate(zip(lat_coords, lon_coords)):                                                    # position of selected core
@@ -84,6 +78,9 @@ def get_L_org(conv_regions, da_area, r_bin_edges):
 # == when this script is ran ==
 if __name__ == '__main__':
     ''
+
+
+
 
 
 

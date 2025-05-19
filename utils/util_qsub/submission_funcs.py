@@ -42,8 +42,6 @@ def create_resource_script(python_script, folder, filename, walltime, mem, ncpus
 {dependency_line}""".strip() + f"""
 echo "== Starting {filename} =="
 echo "-- Loading modules --"
-module use /g/data/hh5/public/modules
-module load conda/analysis3-unstable
 echo ""
 PYTHON_SCRIPT={python_script}
 {command_line}"""
@@ -88,6 +86,12 @@ def check_env_variables(env_variables):
 
 
 
-
+# module use /g/data/hh5/public/modules
+# module load conda/analysis3-unstable
 # print(f'created temp pbs script at: {pbs_script}')
 # gdata/al33+gdata/oi10+gdata/ia39+gdata/rt52+gdata/fs38+gdata/k10+gdata/hh5+scratch/w40
+
+
+# module use /g/data/xp65/public/modules
+# module load conda/analysis3-25.02
+# source /g/data/nf33/public/hackathon-2025/venvs/hackathon_env/bin/activate

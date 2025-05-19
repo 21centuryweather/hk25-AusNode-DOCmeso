@@ -65,6 +65,7 @@ def plot_ax_title(ds, fig, ax):
             ds.attrs.get('axtitle_label', ''),                          
             fontsize = ds.attrs.get('axtitle_fontsize', 5), 
             transform=fig.transFigure,
+            linespacing = 0.75
             # fontweight = 'bold'
             )
 
@@ -149,15 +150,17 @@ def plot(fig, nrows, ncols, row, col, ax, ds, ds_contour = None, ds_ontop = None
     if ds_contour is None:
         pass
     else:
+        lat_contour, lon_contour = ds_contour.lat, ds_contour.lon
+        lonm_contour,latm_contour = np.meshgrid(lon_contour, lat_contour)
         if ds_contour.attrs.get('contour_text_size', False):
-            contours = ax.contour(lonm, latm, ds_contour['var'], 
+            contours = ax.contour(lonm_contour, latm_contour, ds_contour['var'], 
                                 transform=ccrs.PlateCarree(),
                                 levels =        ds_contour.attrs.get('threshold'),
                                 colors =        ds_contour.attrs.get('color'), 
                                 linewidths =    ds_contour.attrs.get('linewidth'))
             ax.clabel(contours, inline = True, fontsize = ds_contour.attrs.get('contour_text_size'), fmt = '%1.0f', colors = ds_contour.attrs.get('color')) 
         else:
-            contours = ax.contour(lonm, latm, ds_contour['var'], 
+            contours = ax.contour(lonm_contour, latm_contour, ds_contour['var'], 
                                 transform=ccrs.PlateCarree(),
                                 levels =        [ds_contour.attrs.get('threshold')],
                                 colors =        ds_contour.attrs.get('color'), 

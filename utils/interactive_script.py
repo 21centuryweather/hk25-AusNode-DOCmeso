@@ -46,7 +46,7 @@ def start_interactive_session():
             "-l", storage_string,
             "-l", "wd",                                                                                                             # Working directory
             "-q", "normal",                                                                                                         # Queue
-            "-l", "walltime=2:00:00",                                                                                               # Wall time
+            "-l", "walltime=4:00:00",                                                                                               # Wall time
             "-l", "mem=50GB",                                                                                                       # Memory
             "-l", "ncpus=1",                                                                                                        # CPUs
             "-l", "jobfs=200GB"                                                                                                     # Job file system

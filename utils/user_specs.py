@@ -7,6 +7,11 @@ scratch:
 work:       
 /g/data/k10/cb4968
 
+
+scratch:    
+/scratch/nf33/cb4968
+work:       
+/g/data/nf33/cb4968
 '''
 
 # == imports ==
@@ -17,11 +22,12 @@ import os
 # == get user ==
 def get_user_specs(show = False):
     username =          os.path.expanduser("~").split('/')[-1]                          # ex; 'cb4968'
-    storage_project =   'k10'                                                           # storage project
-    SU_project =        'gb02'                                                          # resource project
-    # SU_project =        'nf33'    
+    # storage_project =   'k10'                                                           # storage project
+    storage_project =   'nf33' 
+    # SU_project =        'gb02'                                                          # resource project
+    SU_project =        'nf33'    
     data_projects =     ('hh5', 'al33', 'oi10', 'ia39', 'rt52', 'fs38', 'k10', 'gb02',
-                        #  'qx55', 'xp65'
+                         'nf33', 'qx55', 'nf33', 'xp65', 
                          )  # directories available for job
     folder_scratch =    (f'/scratch/{storage_project}/{username}')                      # temp files
     folder_work =       (f'/g/data/{storage_project}/{username}')                       # saved

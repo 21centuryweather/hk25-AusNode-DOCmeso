@@ -22,16 +22,18 @@ sys.path.insert(0, os.getcwd())
 # == post-process ==
 def process_data_further(da, process_request):
     ''' Function to save regridded data '''
-    var_name, dataset, time_period, t_freq, lon_area, lat_area, resolution, name, _ = process_request
-    path_save = f"/scratch/nf33/hk25_DOCmeso/{dataset}_interp/{dataset}_{var_name}_{resolution}_{time_period.replace(' ','')}_{name}.nc"    
+    ''
+    # var_name, dataset, time_period, t_freq, lon_area, lat_area, resolution, name, _ = process_request
+    # path_save = f"/scratch/nf33/hk25_DOCmeso/{dataset}_interp/{dataset}_{var_name}_{resolution}_{time_period.replace(' ','')}_{name}.nc"    
     
-    try: del da.attrs["hiopy::enable"]
-    except: pass
+    # try: del da.attrs["hiopy::enable"]
+    # except: pass
 
-    # Save as netcdf
-    da.to_netcdf(path_save)
+    # # Save as netcdf
+    # da.to_netcdf(path_save)
     
-    print (f"{dataset} regridded file was saved")
+    # print (f"{dataset} regridded file was saved")
+    ''
     del da
 
 # == pre-process ==
@@ -101,7 +103,6 @@ def get_data(process_request, process_data_further):
     var, dataset, time_str, t_freq, lon_area, lat_area, resolution, _, ds_regrid = process_request
 
     # -- get file and open data --
-    
     if dataset == "IMERG":
         year, month, day = time_str.split('-')
         folder = f'/g/data/ia39/aus-ref-clim-data-nci/gpm/data/V07/{year}'
@@ -136,10 +137,9 @@ def get_data(process_request, process_data_further):
     # -- pre-process --
     if dataset == "IMERG":
         da = pre_process(da, process_request)
-
     else:
         da = regrid(da, process_request)
-        da = process_data_further(da, process_request)
+        # da = process_data_further(da, process_request)
         
     return da
 
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     # Get model data and interpolate to IMERG grid
     var   =         'pr'
     dataset =       'ICON' # "UM" or "ICON"
-    time_str =      '2020-03-01 00:00' # or "All"
+    time_str =      '2020-03-01' # or "All"
     t_freq =        '1H'
     lon_area =      None
     lat_area =      None
@@ -174,4 +174,7 @@ if __name__ == '__main__':
     process_request = [var, dataset, time_str, t_freq, lon_area, lat_area, resolution, name, ds_imerg]
     ds_model = get_data(process_request, process_data_further)
     
+    print(ds_model)
     exit()
+
+
